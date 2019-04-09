@@ -65,14 +65,14 @@ class SpentRepositoryEloquent extends RepositoryAbstractEloquent
         if ($dateStart = Arr::get($parameters, 'date_start'))
         {
             $date = new \DateTime($dateStart);
-            $query->where('note.gitlab_created_at', '>=', $date->format('Y-m-d'));
+            $query->where('spent.spent_at', '>=', $date->format('Y-m-d'));
         }
 
         if ($dateEnd = Arr::get($parameters, 'date_end'))
         {
             $date = new \DateTime($dateEnd);
             $date->add(new \DateInterval('P1D'));
-            $query->where('note.gitlab_created_at', '<', $date->format('Y-m-d'));
+            $query->where('spent.spent_at', '<', $date->format('Y-m-d'));
         }
 
         if ($labels = Arr::get($parameters, 'labels'))
@@ -97,7 +97,7 @@ class SpentRepositoryEloquent extends RepositoryAbstractEloquent
 
         $query = $query
             ->select([
-                'note.gitlab_created_at',
+                'spent.spent_at',
                 'project.path_with_namespace as project',
                 'issue.iid',
                 'issue.title as issue_title',
@@ -109,11 +109,11 @@ class SpentRepositoryEloquent extends RepositoryAbstractEloquent
             ->join('project', 'project.id', '=', 'issue.project_id');
 
         if ($dateStart = Arr::get($parameters, 'date_start')) {
-            $query->where('note.gitlab_created_at', '>=', $dateStart);
+            $query->where('spent.spent_at', '>=', $dateStart);
         }
 
         if ($dateFinish = Arr::get($parameters, 'date_finish')) {
-            $query->where('note.gitlab_created_at', '<', $dateFinish);
+            $query->where('spent.spent_at', '<', $dateFinish);
         }
 
         if ($userId = Arr::get($parameters, 'user_id')) {
@@ -134,7 +134,7 @@ class SpentRepositoryEloquent extends RepositoryAbstractEloquent
 
         $query
             ->orderBy('issue.iid', 'asc')
-            ->orderBy('note.gitlab_created_at', 'asc');
+            ->orderBy('spent.spent_at', 'asc');
 
         return $query->get();
     }
